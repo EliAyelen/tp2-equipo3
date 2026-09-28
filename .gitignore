@@ -1,0 +1,22 @@
+# Entorno virtual
+venv_tp2/
+venv/
+.venv/
+
+# Variables de entorno y credenciales sensibles
+.env
+*.env
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+# Checkpoints de Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Configuraciones locales de VSC y SO
+.vscode/
+.DS_Store
+Thumbs.db
+
