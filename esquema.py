@@ -1,24 +1,27 @@
 """Traduce los nombres canónicos de Sakila (en inglés) a los nombres exactos
 de tablas y columnas elegidos en la migración de SQL Server (sakila_espanol)."""
 
+# Mapeo de esquema 
+ESQUEMA = "sakila"
+
 # Mapeo de las 16 Tablas: Nombre canónico (inglés) -> Nombre en español
 TABLAS = {
-    "actor": "actor",
-    "address": "direccion",
-    "category": "categoria",
-    "city": "ciudad",
-    "country": "pais",
-    "customer": "cliente",
-    "film": "pelicula",
-    "film_actor": "pelicula_actor",
-    "film_category": "pelicula_categoria",
-    "film_text": "pelicula_texto",
-    "inventory": "inventario",
-    "language": "idioma",
-    "payment": "pago",
-    "rental": "alquiler",
-    "staff": "empleado",
-    "store": "tienda",
+    "actor": f"{ESQUEMA}.actor",
+    "address": f"{ESQUEMA}.direccion",
+    "category": f"{ESQUEMA}.categoria",
+    "city": f"{ESQUEMA}.ciudad",
+    "country": f"{ESQUEMA}.pais",
+    "customer": f"{ESQUEMA}.cliente",
+    "film": f"{ESQUEMA}.pelicula",
+    "film_actor": f"{ESQUEMA}.pelicula_actor",
+    "film_category": f"{ESQUEMA}.pelicula_categoria",
+    "film_text": f"{ESQUEMA}.pelicula_texto",
+    "inventory": f"{ESQUEMA}.inventario",
+    "language": f"{ESQUEMA}.idioma",
+    "payment": f"{ESQUEMA}.pago",
+    "rental": f"{ESQUEMA}.alquiler",
+    "staff": f"{ESQUEMA}.empleado",
+    "store": f"{ESQUEMA}.tienda",
 }
 
 # Mapeo de Columnas de las 16 Tablas
