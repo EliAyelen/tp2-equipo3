@@ -4,24 +4,24 @@ de tablas y columnas elegidos en la migración de SQL Server (sakila_espanol).""
 # Mapeo de esquema 
 ESQUEMA = "sakila"
 
-# Mapeo de las 16 Tablas: Nombre canónico (inglés) -> Nombre en español
+# Mapeo de las 16 tablas: nombre canónico (inglés) -> nombre en la base del equipo
 TABLAS = {
-    "actor": f"{ESQUEMA}.actor",
-    "address": f"{ESQUEMA}.direccion",
-    "category": f"{ESQUEMA}.categoria",
-    "city": f"{ESQUEMA}.ciudad",
-    "country": f"{ESQUEMA}.pais",
-    "customer": f"{ESQUEMA}.cliente",
-    "film": f"{ESQUEMA}.pelicula",
-    "film_actor": f"{ESQUEMA}.pelicula_actor",
-    "film_category": f"{ESQUEMA}.pelicula_categoria",
-    "film_text": f"{ESQUEMA}.pelicula_texto",
-    "inventory": f"{ESQUEMA}.inventario",
-    "language": f"{ESQUEMA}.idioma",
-    "payment": f"{ESQUEMA}.pago",
-    "rental": f"{ESQUEMA}.alquiler",
-    "staff": f"{ESQUEMA}.empleado",
-    "store": f"{ESQUEMA}.tienda",
+    "actor": "actor",
+    "address": "direccion",
+    "category": "categoria",
+    "city": "ciudad",
+    "country": "pais",
+    "customer": "cliente",
+    "film": "pelicula",
+    "film_actor": "pelicula_actor",
+    "film_category": "pelicula_categoria",
+    "film_text": "pelicula_texto",
+    "inventory": "inventario",
+    "language": "idioma",
+    "payment": "pago",
+    "rental": "alquiler",
+    "staff": "empleado",
+    "store": "tienda",
 }
 
 # Mapeo de Columnas de las 16 Tablas
@@ -172,6 +172,20 @@ def obtener_mapping_inverso_columnas(tabla_canonica: str) -> dict:
     """
     mapping_directo = COLUMNAS.get(tabla_canonica, {})
     return {v: k for k, v in mapping_directo.items()}
+
+def nombres_conjunto_trabajo() -> dict:
+    """Nombres reales que necesita sql/conjunto_trabajo.sql, como parámetros."""
+    return {
+        "esquema":            ESQUEMA,
+        "t_alquiler":         obtener_tabla("rental"),
+        "t_pago":             obtener_tabla("payment"),
+        "c_id_alquiler":      obtener_columna("rental", "rental_id"),
+        "c_fecha_alquiler":   obtener_columna("rental", "rental_date"),
+        "c_id_cliente":       obtener_columna("rental", "customer_id"),
+        "c_pago_id_alquiler": obtener_columna("payment", "rental_id"),
+        "c_monto":            obtener_columna("payment", "amount"),
+    }
+
 
 if __name__ == "__main__":
     print("\n==========================================")

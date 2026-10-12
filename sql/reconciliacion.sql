@@ -1,35 +1,39 @@
--- Descripción:
---   Consulta T-SQL que contabiliza el número total de registros por cada una
---   de las 16 tablas pertenecientes al esquema 'sakila_espanol'.
--- ============================================================================
+-- =====================================================================
+-- RECONCILIACIÓN — Actividad 0
+-- Cuenta las filas de TODAS las tablas del esquema recibido por parámetro. 
+-- No contiene ningún nombre propio de la
+-- base del equipo: los nombres salen del catálogo (sys.tables), y Python los
+-- traduce a nombres canónicos con esquema.TABLAS. Así el mismo archivo
+-- funciona contra la base de cualquier equipo.
+-- =====================================================================
+SET NOCOUNT ON;
 
-USE sakila_espanol; 
-GO
+DECLARE @esquema sysname = :esquema;
 
-SELECT 'actor' AS tabla, COUNT(*) AS filas_sql_server FROM [sakila].[actor]
-UNION ALL SELECT 'alquiler', COUNT(*) FROM [sakila].[alquiler]
-UNION ALL SELECT 'categoria', COUNT(*) FROM [sakila].[categoria]
-UNION ALL SELECT 'ciudad', COUNT(*) FROM [sakila].[ciudad]
-UNION ALL SELECT 'cliente', COUNT(*) FROM [sakila].[cliente]
-UNION ALL SELECT 'direccion', COUNT(*) FROM [sakila].[direccion]
-UNION ALL SELECT 'empleado', COUNT(*) FROM [sakila].[empleado]
-UNION ALL SELECT 'idioma', COUNT(*) FROM [sakila].[idioma]
-UNION ALL SELECT 'inventario', COUNT(*) FROM [sakila].[inventario]
-UNION ALL SELECT 'pago', COUNT(*) FROM [sakila].[pago]
-UNION ALL SELECT 'pais', COUNT(*) FROM [sakila].[pais]
-UNION ALL SELECT 'pelicula', COUNT(*) FROM [sakila].[pelicula]
-UNION ALL SELECT 'pelicula_actor', COUNT(*) FROM [sakila].[pelicula_actor]
-UNION ALL SELECT 'pelicula_categoria', COUNT(*) FROM [sakila].[pelicula_categoria]
-UNION ALL SELECT 'pelicula_texto', COUNT(*) FROM [sakila].[pelicula_texto]
-UNION ALL SELECT 'tienda', COUNT(*) FROM [sakila].[tienda];
+IF SCHEMA_ID(@esquema) IS NULL
+    THROW 50002, 'El esquema indicado en esquema.py no existe en la base.', 1;
 
--- ============================================================================
--- Descripción:
---   Consulta comentada de MySQL que contabiliza el número total de registros por cada una
---   de las 16 tablas pertenecientes al esquema 'sakila'.
--- ============================================================================
+-- QUOTENAME protege cada nombre; los nombres provienen del propio catálogo.
+DECLARE @sql nvarchar(max);
 
-"""
+SELECT @sql = STRING_AGG(
+           CAST(N'SELECT ' + QUOTENAME(t.name, '''') + N' AS tabla_bd, '
+                + N'COUNT_BIG(*) AS filas_sql_server FROM '
+                + QUOTENAME(s.name) + N'.' + QUOTENAME(t.name) AS nvarchar(max)),
+           N' UNION ALL ')
+       WITHIN GROUP (ORDER BY t.name)
+FROM sys.tables  t
+JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @esquema;
+
+SET @sql = @sql + N' ORDER BY tabla_bd;';
+
+EXEC sp_executesql @sql;
+
+/* =====================================================================
+   CONTEO EN EL ORIGEN (MySQL / HeidiSQL, base sakila original).
+
+
 USE sakila;
 
 SELECT 'actor' AS tabla, COUNT(*) AS filas_origen FROM actor
@@ -48,5 +52,4 @@ UNION ALL SELECT 'payment', COUNT(*) FROM payment
 UNION ALL SELECT 'rental', COUNT(*) FROM rental
 UNION ALL SELECT 'staff', COUNT(*) FROM staff
 UNION ALL SELECT 'store', COUNT(*) FROM store;
-
-"""
+   ===================================================================== */
