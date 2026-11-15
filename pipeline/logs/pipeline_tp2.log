@@ -1,0 +1,30 @@
+2026-11-14 21:27:57,107 INFO === Pipeline TP2 (Variante 3): inicio ===
+2026-11-14 21:27:57,200 INFO Inicio: extraer
+2026-11-14 21:27:57,955 INFO SQL Server: 41 filas leídas (días con datos)
+2026-11-14 21:27:57,989 INFO Archivo plano: 6 filas leídas (días clasificados)
+2026-11-14 21:27:57,989 INFO Fin: extraer
+2026-11-14 21:27:57,989 INFO Inicio: transformar (41 días con datos)
+2026-11-14 21:27:58,027 INFO Controles Act 2: 0 faltantes | 0 fechas duplicadas
+2026-11-14 21:27:58,088 INFO Índice: base de 35 días (6 excluidos según el archivo plano)
+2026-11-14 21:27:58,100 INFO Fin: transformar (267 filas: 41 con datos, 226 sin datos)
+2026-11-14 21:27:58,101 INFO Inicio: cargar (267 filas en sakila.TP2_SerieDiariaOperacion)
+2026-11-14 21:27:58,641 INFO Fin: cargar (267 filas insertadas)
+2026-11-14 21:27:58,641 INFO Inicio: verificar
+2026-11-14 21:27:58,682 INFO Verificación sakila.TP2_SerieDiariaOperacion: filas=267 | fechas distintas=267 | días con datos=41 | alquileres=16044
+2026-11-14 21:27:58,682 INFO Fin: verificar
+2026-11-14 21:27:58,682 INFO === Pipeline TP2: finalizado correctamente ===
+2026-11-14 21:27:59,498 INFO === Pipeline TP2 (Variante 3): inicio ===
+2026-11-14 21:27:59,517 INFO Inicio: extraer
+2026-11-14 21:27:59,733 INFO SQL Server: 41 filas leídas (días con datos)
+2026-11-14 21:27:59,735 INFO Archivo plano: 6 filas leídas (días clasificados)
+2026-11-14 21:27:59,736 INFO Fin: extraer
+2026-11-14 21:27:59,736 INFO Inicio: transformar (41 días con datos)
+2026-11-14 21:27:59,739 INFO Controles Act 2: 0 faltantes | 0 fechas duplicadas
+2026-11-14 21:27:59,751 INFO Índice: base de 35 días (6 excluidos según el archivo plano)
+2026-11-14 21:27:59,755 INFO Fin: transformar (267 filas: 41 con datos, 226 sin datos)
+2026-11-14 21:27:59,755 INFO Inicio: cargar (267 filas en sakila.TP2_SerieDiariaOperacion)
+2026-11-14 21:28:00,181 INFO Fin: cargar (267 filas insertadas)
+2026-11-14 21:28:00,182 INFO Inicio: verificar
+2026-11-14 21:28:00,199 INFO Verificación sakila.TP2_SerieDiariaOperacion: filas=267 | fechas distintas=267 | días con datos=41 | alquileres=16044
+2026-11-14 21:28:00,199 INFO Fin: verificar
+2026-11-14 21:28:00,199 INFO === Pipeline TP2: finalizado correctamente ===

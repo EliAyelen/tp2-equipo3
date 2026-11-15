@@ -46,8 +46,15 @@ TIPOS_DESTINO = {
     "indice_ingresos":       Float(),
 }
 
+# Log a consola y a archivo. El archivo se abre en modo "a" (agregar), así cada
+# ejecución se suma a las anteriores evidenciando idempotencia
+RUTA_LOG = RAIZ / "pipeline" / "logs" / "pipeline_tp2.log"
+RUTA_LOG.parent.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(levelname)s %(message)s")
+                    format="%(asctime)s %(levelname)s %(message)s",
+                    handlers=[logging.StreamHandler(),
+                              logging.FileHandler(RUTA_LOG, mode="a", encoding="utf-8")])
 log = logging.getLogger("pipeline_tp2")
 
 

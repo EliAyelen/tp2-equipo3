@@ -30,7 +30,8 @@ tp2-equipo3/
 │   └── analisis.ipynb        actividades 0 a 3, ejecutado
 ├── pipeline/
 │   ├── pipeline_tp2.py       actividad 4
-│   └── datos/clasificacion_dias.csv
+│   ├── datos/clasificacion_dias.csv
+│   └── logs/pipeline_tp2.log evidencia de dos ejecuciones seguidas
 ├── graficos/                 PNG a 150 dpi
 └── informe/
     ├── informe.pdf
@@ -93,6 +94,10 @@ tp2-equipo3/
    ejemplo `1`) indica que falló, y el detalle queda en el log. El pipeline reemplaza
    la tabla `sakila.TP2_SerieDiariaOperacion` en cada ejecución.
 
+   El log se muestra en consola y además se agrega al final de
+   `pipeline/logs/pipeline_tp2.log`, así cada ejecución queda registrada sin borrar
+   las anteriores.
+
 8. Verifica la idempotencia: ejecuta el paso 7 dos veces seguidas y corre en SQL
    Server la siguiente consulta. Después de cada ejecución el resultado debe ser el
    mismo: 267 filas, 267 fechas distintas, 41 días con datos y 16.044 alquileres.
@@ -102,6 +107,10 @@ tp2-equipo3/
           SUM(CAST(con_datos AS int))      AS dias_con_datos,
           SUM(cantidad_alquileres)         AS alquileres
    FROM sakila.TP2_SerieDiariaOperacion;
+
+   La etapa `verificar()` del pipeline ejecuta esta misma consulta y registra el
+   resultado en el log. En `pipeline/logs/pipeline_tp2.log` quedan como evidencia dos
+   ejecuciones seguidas, y las dos dan el mismo resultado.
 
 ## Ejecutar sobre la base de otro equipo
 Editar solamente `esquema.py`: los nombres de las tablas y columnas en `TABLAS` y
