@@ -152,12 +152,22 @@ COLUMNAS = {
 # Funciones auxiliares de consulta de esquema
 
 def obtener_tabla(tabla_canonica: str) -> str:
-    """Retorna el nombre real de la tabla en la base de datos local."""
-    return TABLAS.get(tabla_canonica, tabla_canonica)
+    """Retorna el nombre real de la tabla en la base de datos local.
+    Falla si la tabla no está mapeada."""
+    if tabla_canonica not in TABLAS:
+        raise KeyError(f"La tabla '{tabla_canonica}' no está mapeada en TABLAS de esquema.py")
+    return TABLAS[tabla_canonica]
 
 def obtener_columna(tabla_canonica: str, columna_canonica: str) -> str:
-    """Retorna el nombre real de una columna en la base de datos local."""
-    return COLUMNAS.get(tabla_canonica, {}).get(columna_canonica, columna_canonica)
+    """Retorna el nombre real de una columna en la base de datos local.
+    Falla si la tabla o la columna no están mapeadas."""
+    columnas = COLUMNAS.get(tabla_canonica)
+    if columnas is None:
+        raise KeyError(f"La tabla '{tabla_canonica}' no está mapeada en COLUMNAS de esquema.py")
+    if columna_canonica not in columnas:
+        raise KeyError(f"La columna '{columna_canonica}' de '{tabla_canonica}' "
+                       "no está mapeada en COLUMNAS de esquema.py")
+    return columnas[columna_canonica]
 
 def obtener_mapping_columnas(tabla_canonica: str) -> dict:
     """
