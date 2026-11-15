@@ -8,7 +8,8 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-from sqlalchemy import Integer, MetaData, Table, cast, distinct, func, select, text
+from sqlalchemy import (Column, Integer, MetaData, PrimaryKeyConstraint, Table,
+                        cast, delete, distinct, func, inspect, select, text)
 from sqlalchemy.types import Boolean, Date, Float, NVARCHAR, Numeric
 
 # Raíz del proyecto en el camino de búsqueda
@@ -145,17 +146,44 @@ def transformar(diario, clasificacion):
     return serie
 
 
-def cargar(engine, serie):
-    """Reemplaza por completo la tabla destino, dentro de una única transacción."""
+def definir_tabla_destino():
+    """Estructura de la tabla destino: tipos de TIPOS_DESTINO y fecha como clave primaria."""
+    columnas = [Column(nombre, tipo, nullable=(nombre != "fecha"))
+                for nombre, tipo in TIPOS_DESTINO.items()]
+    return Table(TABLA_DESTINO, MetaData(), *columnas,
+                 PrimaryKeyConstraint("fecha", name=f"PK_{TABLA_DESTINO}"),
+                 schema=ESQUEMA)
+
+
+def preparar_destino(engine):
+    """Crea la tabla destino si no existe. Si existe sin clave primaria
+    (versión anterior, creada con replace), la recrea una única vez."""
+    tabla = definir_tabla_destino()
+    inspector = inspect(engine)
+
+    if inspector.has_table(TABLA_DESTINO, schema=ESQUEMA):
+        pk = inspector.get_pk_constraint(TABLA_DESTINO, schema=ESQUEMA)
+        if pk["constrained_columns"] == ["fecha"]:
+            log.info("Tabla destino %s.%s ya existe con clave primaria", ESQUEMA, TABLA_DESTINO)
+            return tabla
+        log.warning("%s.%s existe sin clave primaria: se recrea", ESQUEMA, TABLA_DESTINO)
+        tabla.drop(engine)
+
+    tabla.create(engine)
+    log.info("Tabla destino %s.%s creada con clave primaria (fecha)", ESQUEMA, TABLA_DESTINO)
+    return tabla
+
+
+def cargar(engine, tabla, serie):
+    """Vacía la tabla destino e inserta la serie, dentro de una única transacción."""
     log.info("Inicio: cargar (%d filas en %s.%s)", len(serie), ESQUEMA, TABLA_DESTINO)
 
-    
     with engine.begin() as conexion:
+        borradas = conexion.execute(delete(tabla)).rowcount
         serie.to_sql(TABLA_DESTINO, con=conexion, schema=ESQUEMA,
-                     if_exists="replace", index=False,
-                     chunksize=1000, dtype=TIPOS_DESTINO)
+                     if_exists="append", index=False, chunksize=1000)
 
-    log.info("Fin: cargar (%d filas insertadas)", len(serie))
+    log.info("Fin: cargar (%d filas borradas, %d insertadas)", borradas, len(serie))
 
 
 def verificar(engine, filas_esperadas):
@@ -189,7 +217,8 @@ def ejecutar_pipeline():
         engine = obtener_engine()
         diario, clasificacion = extraer(engine)
         serie = transformar(diario, clasificacion)
-        cargar(engine, serie)
+        tabla = preparar_destino(engine)
+        cargar(engine, tabla, serie)
         verificar(engine, filas_esperadas=len(serie))
         log.info("=== Pipeline TP2: finalizado correctamente ===")
     except Exception:

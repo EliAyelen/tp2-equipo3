@@ -91,8 +91,10 @@ tp2-equipo3/
    $LASTEXITCODE
 
    `0` indica que el pipeline terminó correctamente; un valor distinto de `0` (por
-   ejemplo `1`) indica que falló, y el detalle queda en el log. El pipeline reemplaza
-   la tabla `sakila.TP2_SerieDiariaOperacion` en cada ejecución.
+   ejemplo `1`) indica que falló, y el detalle queda en el log. La primera ejecución
+   crea la tabla `sakila.TP2_SerieDiariaOperacion` con `fecha` como clave primaria;
+   las siguientes la vacían y vuelven a insertar la serie completa, dentro de una
+   única transacción.
 
    El log se muestra en consola y además se agrega al final de
    `pipeline/logs/pipeline_tp2.log`, así cada ejecución queda registrada sin borrar
